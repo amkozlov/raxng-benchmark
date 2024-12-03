@@ -7,7 +7,7 @@ from plotly import graph_objects as go
 from app import app
 from definitions import *
 
-CWAY=["red", "green"]
+CWAY=["red", "green", "blue"]
 TFMT="%r"
 
 def get_plot_options(plot_type, df, metric, dataset = None):
@@ -75,8 +75,7 @@ def plot_per_command_comparison(dataset, command, metric):
         fig.add_trace(
             plot_type(
                 name=version.name,
-                **plot_options,
-                
+                **plot_options
             )
         )
 
@@ -125,6 +124,7 @@ def plot_per_command_comparison(dataset, command, metric):
     Input("commandSelector", "value"),
     Input("resultMetricAllTreesSelector", "value")
 )
+
 def plot_per_command_comparison(dataset, command, metric):
     results_dir = RESULTS_BASE / dataset / command
     raxmlng_versions = [d for d in results_dir.iterdir() if d.is_dir()]
@@ -132,7 +132,7 @@ def plot_per_command_comparison(dataset, command, metric):
     fig = go.Figure()
 
     for version in raxmlng_versions:
-        df = pd.read_parquet(version / (version.name + ".results.trees.parquet"))
+        df = pd.read_parquet(version / (version.name + ".consel.results.trees.parquet"))
         plot_type = VERSION_COMPARISON_PLOT_METRICS_ALL_TREES[metric]
 
         plot_options, xtitle, ytitle = get_plot_options(plot_type, df, metric, dataset)

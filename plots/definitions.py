@@ -41,8 +41,6 @@ VERSION_COMPARISON_PLOT_METRICS_ENTIRE_RUN = {
 VERSION_COMPARISON_PLOT_METRICS_ALL_TREES = {
     "logLikelihood": go.Box,
     "plausible": go.Bar,
-    "bpRell": go.Box,
-    "bpRell_significant": go.Bar,
     "pKH": go.Box,
     "pKH_significant": go.Bar,
     "pSH": go.Box,
@@ -51,8 +49,6 @@ VERSION_COMPARISON_PLOT_METRICS_ALL_TREES = {
     "pWKH_significant": go.Bar,
     "pWSH": go.Box,
     "pWSH_significant": go.Bar,
-    "cELW": go.Box,
-    "cELW_significant": go.Bar,
     "pAU": go.Box,
     "pAU_significant": go.Bar,
 }

@@ -38,6 +38,8 @@ msas = dict([(pathlib.Path(msa).name, msa) for msa in _msas])
 models = dict([(msa, model) for msa, model in zip(_msas, _models)])
 model_names = dict([(msa, model if not pathlib.Path(msa).is_file() else pathlib.Path(model).name) for msa, model in zip(_msas, _models)])
 
+
+
 cmds = config["commandLines"]
 command_repr_mapping = dict([(cmd
                               .replace(" ", "")
@@ -95,10 +97,14 @@ rule all:
         # IQ-Tree significance analyses
         collected_trees = expand_path(command_dir / "all.mlTrees", expand_command=True),
         collected_best_tree = expand_path(command_dir / "all.bestTree", expand_command=True),
-#         collected_iqtree_results = expand_path(command_dir / "all.iqtree", expand_command=True),
+        versions_file = expand_path(command_dir / "all.versions", expand_command=True),
+        consel_file = expand_path(command_dir / "all.consel", expand_command=True),
+        sitelh_file = expand_path(command_dir / "all.raxml.siteLH", expand_command=True),
+        collected_consel_results = expand_path(command_dir / "collected.results.parquet", expand_command=True),
+        all_results = expand_path(command_dir / "all.results.parquet", expand_command=True)
 
         # collected results
-        collected_general_results = expand_path(command_dir / "all.results.parquet", expand_command=True),
+#        collected_general_results = expand_path(command_dir / "all.results.parquet", expand_command=True),
 #        collected_tree_results = expand_path(command_dir / "all.results.trees.parquet", expand_command=True),
 
 
