@@ -101,9 +101,14 @@ rule collect_results_per_raxmlng_version:
         else:
           avg_bs_sup = 0
 
+        best_aic, best_aicc, best_bic = get_raxmlng_ic_scores(input.raxmlng_log)
+
         results = {
             "version": wildcards.raxmlng, 
             "bestLogLikelihood": get_raxmlng_best_llh(input.raxmlng_log),
+            "bestAICScore": best_aic,
+            "bestAICcScore": best_aicc,
+            "bestBICScore": best_bic,
             "runtime": get_raxmlng_elapsed_time(input.raxmlng_log),
             "numberOfInferredTrees": n_ml_trees,
             "uniqueTopologiesMLTrees": num_topos,
@@ -111,6 +116,7 @@ rule collect_results_per_raxmlng_version:
             "absoluteRFDistanceMLTrees": abs_rfdist,
             "avgBootstrapLogLikelihood": avg_bs_lh,
             "avgBootstrapSupport": avg_bs_sup,
+            "pythiaDifficultyScore": get_raxmlng_pythia_score(input.raxmlng_log),
         }
         # TODO: what other information do we want to retrieve from the log?
 

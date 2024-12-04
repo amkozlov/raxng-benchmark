@@ -25,6 +25,10 @@ VERSION_COMPARISON_PLOT_METRICS_SUMMARY = {
     "numberOfInferredTrees": go.Scatter,
     "uniqueTopologiesMLTrees": go.Scatter,
     "isPlausible" : go.Box,
+    "pythiaDifficultyScore" : go.Scatter,
+    "bestAICScore": go.Scatter,
+    "bestAICcScore": go.Scatter,
+    "bestBICScore": go.Scatter,
 }
 
 VERSION_COMPARISON_PLOT_METRICS_ENTIRE_RUN = {
@@ -36,6 +40,10 @@ VERSION_COMPARISON_PLOT_METRICS_ENTIRE_RUN = {
     "absoluteRFDistanceMLTrees": go.Scatter,
     "avgBootstrapLogLikelihood" : go.Scatter,
     "avgBootstrapSupport" : go.Scatter,
+    "pythiaDifficultyScore" : go.Scatter,
+    "bestAICScore": go.Scatter,
+    "bestAICcScore": go.Scatter,
+    "bestBICScore": go.Scatter,
 }
 
 VERSION_COMPARISON_PLOT_METRICS_ALL_TREES = {

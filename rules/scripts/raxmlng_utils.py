@@ -83,6 +83,38 @@ def get_raxmlng_elapsed_time(log_file: FilePath) -> float:
     )
 
 
+def get_raxmlng_ic_scores(raxmlng_file: FilePath) -> Tuple[float, float, float]:
+    # AIC score: 1640560.457503 / AICc score: 1640565.191951 / BIC score: 1642721.583409
+    ic_regex = re.compile("AIC score:\s+([0-9.]+)\s+/\s+AICc score:\s+([0-9.]+)\s+/\s+BIC score:\s+([0-9.]+)")
+    likelihoods = []
+
+    aic_score = None
+    aicc_score = None
+    bic_score = None
+
+    for line in read_file_contents(raxmlng_file):
+        if line.startswith("AIC score:"):
+            m = ic_regex.search(line)
+            if m:
+                aic_score = float(m.groups()[0])
+                aicc_score = float(m.groups()[1])
+                bic_score = float(m.groups()[2])
+                break
+
+    return aic_score, aicc_score, bic_score
+
+def get_raxmlng_pythia_score(raxmlng_file: FilePath) -> float:
+    #[00:00:00] Predicted difficulty: 0.07
+    pythia_regex = re.compile("\[\d+:\d+:\d+\]\s*Predicted difficulty:\s([0-9.]+)")
+
+    for line in read_file_contents(raxmlng_file):
+        if "difficulty:" in line:
+            m = pythia_regex.search(line)
+            if m:
+                return float(m.groups()[0])
+   
+    return None
+
 def raxmlng_rfdist(raxmlng: Executable, trees_file: FilePath) -> Tuple[float, float, float]:
     with TemporaryDirectory() as tmpdir:
         prefix = pathlib.Path(tmpdir) / "rfdist"
