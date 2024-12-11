@@ -71,3 +71,21 @@ def populate_summary_metric_selector(_):
     options = [{"label": col, "value": col} for col in VERSION_COMPARISON_PLOT_METRICS_SUMMARY]
     return options, options[0]["value"]
 
+@app.callback(
+    Output("resultMetricSelectorX", "options"),
+    Output("resultMetricSelectorX", "value"),
+    Input("_dummy", "children"),
+)
+def populate_summary_metric_selector_x(_):
+    options = [{"label": col, "value": col} for col in VERSION_COMPARISON_PLOT_METRICS_SUMMARY]
+    return options, options[0]["value"]
+
+@app.callback(
+    Output("resultMetricSelectorY", "options"),
+    Output("resultMetricSelectorY", "value"),
+    Input("_dummy", "children"),
+)
+def populate_summary_metric_selector_y(_):
+    options = [{"label": col, "value": col} for col in VERSION_COMPARISON_PLOT_METRICS_SUMMARY]
+    return options, options[0]["value"]
+

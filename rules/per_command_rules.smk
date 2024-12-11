@@ -110,11 +110,14 @@ rule collect_results_per_command:
         baseline_version_line = all_results[all_results["version"] == baseline_ver].reset_index(drop=True)
         baseline_runtime = baseline_version_line["runtime"][0]
         baseline_loglh = baseline_version_line["bestLogLikelihood"][0]
+        baseline_bic = baseline_version_line["bestBICScore"][0]
 
         all_results = all_results.assign(speedup = baseline_runtime / all_results["runtime"], 
-                                         absoluteLogLikelihoodDiff = all_results["bestLogLikelihood"] - baseline_loglh)
+                                         absoluteLogLikelihoodDiff = all_results["bestLogLikelihood"] - baseline_loglh,
+                                         absoluteBICScoreDiff =  all_results["bestBICScore"] - baseline_bic)
 
-        all_results = all_results.assign(relativeLogLikelihoodDiff = -1 * all_results["absoluteLogLikelihoodDiff"] / baseline_loglh)
+        all_results = all_results.assign(relativeLogLikelihoodDiff = -1 * all_results["absoluteLogLikelihoodDiff"] / baseline_loglh,
+                                         relativeBICScoreDiff = -1 * all_results["absoluteBICScoreDiff"] / baseline_bic)
 
         print(all_results)
 

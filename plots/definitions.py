@@ -29,6 +29,12 @@ VERSION_COMPARISON_PLOT_METRICS_SUMMARY = {
     "bestAICScore": go.Scatter,
     "bestAICcScore": go.Scatter,
     "bestBICScore": go.Scatter,
+    "absoluteBICScoreDiff": go.Scatter,
+    "relativeBICScoreDiff": go.Scatter,
+    "# taxa" : go.Scatter,
+    "# sites" : go.Scatter,
+    "# patterns" : go.Scatter,
+    "# partitions" : go.Scatter,
 }
 
 VERSION_COMPARISON_PLOT_METRICS_ENTIRE_RUN = {

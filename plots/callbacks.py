@@ -171,4 +171,25 @@ def plot_per_command_summary(command, metric):
     fig.update_layout(template=TEMPLATE, colorway=CWAY, hoverlabel=HVLABEL)
     return fig
 
+@app.callback(
+    Output("versionMetricPlot", "figure"),
+    Input("commandSelector", "value"),
+    Input("resultMetricSelectorX", "value"),
+    Input("resultMetricSelectorY", "value")
+)
+def plot_per_metric(command, xmetric, ymetric):
+    datasets = [d for d in RESULTS_BASE.iterdir() if d.is_dir() and (d / command / "all.results.parquet").is_file()]
+
+    fig = go.Figure()
+
+    df = pd.concat([pd.read_parquet(dset / command / "all.results.parquet").assign(dataset=dset.name) for dset in datasets], ignore_index=True).reset_index(drop=True)
+
+    plot_type = VERSION_COMPARISON_PLOT_METRICS_SUMMARY[ymetric]
+
+#    xmetric = "pythiaDifficultyScore"
+    fig = px.box(df, x = xmetric, y = ymetric, color="version", points="all", hover_data=["dataset"] )
+    fig.update_yaxes(tickformat=TFMT)
+
+    fig.update_layout(template=TEMPLATE, colorway=CWAY, hoverlabel=HVLABEL)
+    return fig
 

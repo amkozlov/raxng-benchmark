@@ -108,6 +108,37 @@ layout = html.Div(
                         ),
                     ]
                 ),
+                html.Div(
+                    [
+                        html.H3("Metric-by-Metric view"),
+                        html.P("The following plots show by metric comparison."),
+                        html.Br(),
+                        html.Div(
+                            [
+                                html.H5("Comparison entire run"),
+                                dbc.Row(
+                                 [
+                                  dbc.Col(
+                                      get_empty_dropdown(
+                                        label="Metric X",
+                                        dropdown_id="resultMetricSelectorX",
+                                    ),
+                                  ),
+                                  dbc.Col(
+                                      get_empty_dropdown(
+                                        label="Metric Y",
+                                        dropdown_id="resultMetricSelectorY",
+                                    ),
+                                  ),
+                                 ],
+                                ), 
+                                dcc.Graph(id="versionMetricPlot"),
+                            ]
+                        ),
+                        html.Br(),
+                    ]
+                ),
+
                 # html.Div(
                 #     [
                 #         html.H3("Inter-version comparison"),

@@ -115,6 +115,31 @@ def get_raxmlng_pythia_score(raxmlng_file: FilePath) -> float:
    
     return None
 
+# returns #taxa, #sites, #patterns, #partitions
+def get_raxmlng_msa_dimensions(raxmlng_file: FilePath) -> Tuple[int, int, int, int]:
+    #[00:00:00] Loaded alignment with 994 taxa and 5533 sites
+    site_regex = re.compile("\[\d+:\d+:\d+\]\s*Loaded alignment with\s([0-9]+) taxa and ([0-9]+) sites")
+    #Alignment comprises 1 partitions and 3363 patterns
+    part_regex = re.compile("Alignment comprises\s([0-9]+) partitions and ([0-9]+) patterns")
+
+    num_taxa = num_sites = num_patterns = num_partitions = None
+
+    for line in read_file_contents(raxmlng_file):
+        if "Loaded alignment" in line:
+            m = site_regex.search(line)
+            if m:
+                num_taxa = int(m.groups()[0])
+                num_sites = int(m.groups()[1])
+        elif "Alignment comprises" in line:
+            m = part_regex.search(line)
+            if m:
+                num_partitions = int(m.groups()[0])
+                num_patterns = int(m.groups()[1])
+                break 
+
+    return num_taxa, num_sites, num_patterns, num_partitions
+
+
 def raxmlng_rfdist(raxmlng: Executable, trees_file: FilePath) -> Tuple[float, float, float]:
     with TemporaryDirectory() as tmpdir:
         prefix = pathlib.Path(tmpdir) / "rfdist"

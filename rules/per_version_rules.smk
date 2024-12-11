@@ -20,8 +20,15 @@ rule run_raxmlng_command:
         raxmlng, extra = raxmlng_versions[wildcards.raxmlng]
         msa = msas[wildcards.msa]
         model = models[msa]
+#        model_arg = "" if model == "CMD" else f"--model {model}"
         cmd_base = command_repr_mapping[wildcards.cmd_repr]
         prefix = params.prefix
+
+        # modsed|+G|/P4
+        if extra and extra.startswith("modsed"):
+           dummy, rfrom, rto = extra.split("|") 
+           model = model.replace(rfrom, rto)
+           extra = ""
 
         cmd = f"{raxmlng} {extra} --msa {msa} --model {model} {cmd_base} --prefix {prefix} > {log.snakelog} 2>&1"
 
@@ -101,6 +108,8 @@ rule collect_results_per_raxmlng_version:
         else:
           avg_bs_sup = 0
 
+        n_taxa, n_sites, n_patterns, n_parts = get_raxmlng_msa_dimensions(input.raxmlng_log)
+
         best_aic, best_aicc, best_bic = get_raxmlng_ic_scores(input.raxmlng_log)
 
         results = {
@@ -117,6 +126,10 @@ rule collect_results_per_raxmlng_version:
             "avgBootstrapLogLikelihood": avg_bs_lh,
             "avgBootstrapSupport": avg_bs_sup,
             "pythiaDifficultyScore": get_raxmlng_pythia_score(input.raxmlng_log),
+            "# taxa" : n_taxa,
+            "# sites" : n_sites,
+            "# patterns" : n_patterns,
+            "# partitions" : n_parts,
         }
         # TODO: what other information do we want to retrieve from the log?
 
