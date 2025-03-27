@@ -85,11 +85,11 @@ rule all:
         mlTrees = expand_for_suffix(".raxml.mlTrees", expand_command=True),
 
         # IQ-Tree significance analyses
-        indiv_iqtree_results = expand_path(iqtree_cmd_prefix.with_suffix(".iqtree"), expand_command=True),
+        #indiv_iqtree_results = expand_path(iqtree_cmd_prefix.with_suffix(".iqtree"), expand_command=True),
 
         # collected results
         general_results = expand_for_suffix(".results.parquet", expand_command=True),
-        tree_results = expand_for_suffix(".results.trees.parquet", expand_command=True),
+        #tree_results = expand_for_suffix(".results.trees.parquet", expand_command=True),
 
         #---------------------
         # Comparison of different RAxML-NG versions

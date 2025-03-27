@@ -28,7 +28,7 @@ def consel_statistical_tests(
         f"{raxml_ng} --sitelh {cmd_extra} "
         f"--msa {msa} --model {model} "
         f"--tree {mlTrees} --prefix {sitelh_output_prefix} "
-        f"--seed 0 --redo --lh-epsilon 1.0 "
+        f"--seed 0 --redo --lh-epsilon 0.1 "
         f"> {sitelh_snakelog} 2>&1"
     )
 

@@ -4,6 +4,7 @@ import numpy as np
 import re
 import pandas as pd
 import os
+from scripts.raxmlng_utils import get_loglhs_from_logfile
 
 TEST_NAMES = ["p-KH", "p-SH", "p-WKH", "p-WSH", "p-AU"]
 
@@ -13,7 +14,7 @@ def get_relevant_section(input_file):
     
     return content[3:-1]
 
-def get_loglhs_from_logfile(raxml_log, n):
+def get_loglhs_from_sitelh_logfile(raxml_log, n):
     
     loglhs = np.zeros(n, dtype=float)
 
@@ -38,11 +39,11 @@ def process_line(line):
     idx = int(line[2])
     _obs = float(line[3])
     
-    _pAU = 0.5 if _obs == 0 else float(line[4])
-    _pKH = 0.5 if _obs == 0 else float(line[9])
-    _pWKH = 0.5 if _obs == 0 else float(line[11])
-    _pSH = 0.5 if _obs == 0 else float(line[10])
-    _pWSH = 0.5 if _obs == 0 else float(line[12])
+    _pAU = 0.5 if _obs < 0.5 else float(line[4])
+    _pKH = 0.5 if _obs < 0.5 else float(line[9])
+    _pWKH = 0.5 if _obs < 0.5 else float(line[11])
+    _pSH = 0.5 if _obs < 0.5 else float(line[10])
+    _pWSH = 0.5 if _obs < 0.5 else float(line[12])
 
     return idx ,_pKH, _pWKH, _pSH, _pWSH, _pAU
 
@@ -105,7 +106,7 @@ def get_consel_results(consel_file, raxml_log, mlTrees_file, versions_file, outf
     if mlTrees[-1] == "": mlTrees = mlTrees[:-1]
     num_trees = len(mlTrees)
 
-    loglhs = get_loglhs_from_logfile(raxml_log, num_trees)
+    loglhs = get_loglhs_from_sitelh_logfile(raxml_log, num_trees)
 
     is_best = [False]*num_trees
     is_best[np.argmax(loglhs)] = True
@@ -154,12 +155,17 @@ def get_consel_results(consel_file, raxml_log, mlTrees_file, versions_file, outf
         version_dict = out_df_version.to_dict(orient='records')
         best_tree_dict.append(version_dict[idx])
 
+        version_log = f"{cmd_dir}/{_version}/{_version}.raxml.log"
+        version_loglikelihoods = get_loglhs_from_logfile(version_log, len(out_df_version))
+        idx = np.argmax(version_loglikelihoods)
+
         # correct summary "{version}.results.parquet" file
         tmp_file = f"{cmd_dir}/{_version}/{_version}.results.parquet"
         tmp_data = pd.read_parquet(tmp_file)
-        tmp_data.loc[0, "bestLogLikelihood"] = version_dict[idx]["logLikelihood"]
+        #tmp_data.loc[0, "bestLogLikelihood"] = version_dict[idx]["logLikelihood"]
         tmp_data["version"] = _version
         tmp_data["isPlausible"] = 1 if version_dict[idx]["plausible"] else 0
+        tmp_data["AtLeastOnePlausible"] = 1 if sum(out_df_version.plausible) > 0 else 0
         tmp_data.to_parquet(tmp_file)
-
+    
     return best_tree_dict

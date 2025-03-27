@@ -1,10 +1,13 @@
 import pathlib
 import yaml
+import sys
 
 from plotly import graph_objects as go
 
-
-config = yaml.load(open("config.yaml"), yaml.Loader)
+dataset = sys.argv[1]
+arglen = len(sys.argv)
+config_file = f"config{'_' + dataset if arglen > 1 else ''}.yaml"
+config = yaml.load(open(config_file), yaml.Loader)
 
 RESULTS_BASE = pathlib.Path(config["outdir"])
 DATASETS = sorted([d for d in RESULTS_BASE.iterdir() if d.is_dir()])
@@ -25,6 +28,7 @@ VERSION_COMPARISON_PLOT_METRICS_SUMMARY = {
     "numberOfInferredTrees": go.Scatter,
     "uniqueTopologiesMLTrees": go.Scatter,
     "isPlausible" : go.Box,
+    "AtLeastOnePlausible": go.Box,
     "pythiaDifficultyScore" : go.Scatter,
     "bestAICScore": go.Scatter,
     "bestAICcScore": go.Scatter,
@@ -50,6 +54,8 @@ VERSION_COMPARISON_PLOT_METRICS_ENTIRE_RUN = {
     "bestAICScore": go.Scatter,
     "bestAICcScore": go.Scatter,
     "bestBICScore": go.Scatter,
+    "isPlausible" : go.Box, # maybe not
+    "AtLeastOnePlausible": go.Box # maybe not
 }
 
 VERSION_COMPARISON_PLOT_METRICS_ALL_TREES = {

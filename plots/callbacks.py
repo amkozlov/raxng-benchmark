@@ -7,7 +7,12 @@ from plotly import graph_objects as go
 from app import app
 from definitions import *
 
-CWAY=["red", "green", "blue"]
+import plotly.colors as pc
+
+# Get 10 distinct colors from the Plotly qualitative color scales
+#CWAY=["red", "green", "blue"]
+CWAY = pc.qualitative.Set3
+
 TFMT="%r"
 
 def get_plot_options(plot_type, df, metric, dataset = None):

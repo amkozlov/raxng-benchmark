@@ -1,11 +1,29 @@
 import re
 import subprocess
+import numpy as np
 
 from tempfile import TemporaryDirectory
 
 from .custom_types import *
 from .utils import *
 
+
+def get_loglhs_from_logfile(raxml_log, n):
+    
+    loglhs = np.zeros(n, dtype=float)
+
+    mylines = open(raxml_log, 'r').readlines()
+
+    for line in mylines:
+        line = line.rstrip()
+        if "ML tree search #" in line:
+            idx = int(line.split("#")[-1].split(",")[0])
+            _loglh = float(line.split(" ")[-1])
+            loglhs[idx-1] = _loglh
+
+    assert np.all(loglhs != 0), f"Error while collecting log-likelihoods from {raxml_log}"
+
+    return loglhs
 
 def get_raxmlng_best_llh(raxmlng_file: FilePath) -> float:
     STR = "Final LogLikelihood:"

@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+import numpy as np
+
+from scripts.raxmlng_utils import *
 
 from scripts.iqtree_utils import iqtree_statistical_tests
 from scripts.iqtree_statstest_parser import get_iqtree_results
@@ -13,8 +16,9 @@ versions_only = [str(key) for key in raxmlng_versions]
 rule collect_trees_per_command:
     input:
         # I know it's naive, but it's the only command that worked properly
-        tree_results = [str(command_dir) + "/" + vers + "/" + vers + ".results.trees.parquet" for vers in versions_only]
-
+        raxml_logiles = [str(command_dir) + "/" + vers + "/" + vers + ".raxml.log" for vers in versions_only],
+        raxml_mltrees = [str(command_dir) + "/" + vers + "/" + vers + ".raxml.mlTrees" for vers in versions_only]
+        
     output:
         mlTrees = command_dir / "all.mlTrees",
         versions = command_dir / "all.versions",
@@ -25,25 +29,27 @@ rule collect_trees_per_command:
         best_llh = -np.inf
         
         versions_list = []
-        mlTrees = open(output.mlTrees, "w")
+        mlTrees_list = []
 
-        for results in input.tree_results:
+        for logfile,mlTrees_file in zip(input.raxml_logiles, input.raxml_mltrees):
 
-            raxml_version = results.split("/")[-1].split(".results.")[0]
-            results = pd.read_parquet(results)
-            versions_list += [raxml_version for _ in range(len(results))]
-
-            mlTrees_lsit = results.newick.tolist()
-            for elem in mlTrees_lsit:
-                mlTrees.write(f"{elem}\n")
+            mlTrees = open(mlTrees_file, 'r').readlines()
+            mlTrees = [tree.rstrip().replace(" ", "") for tree in mlTrees]
+            if mlTrees[-1] == "": mlTrees = mlTrees[:-1]
+            mlTrees_list += mlTrees
             
-            best = results.sort_values(by="logLikelihood", ascending=False).head(1)
-      
-            if best.logLikelihood.item() > best_llh:
-                best_llh = best.logLikelihood.item()
-                best_tree = best.newick.item()
-
-        mlTrees.close()
+            raxml_version = logfile.split("/")[-1].split(".raxml.")[0]
+            versions_list += [raxml_version for _ in range(len(mlTrees))]
+            
+            likelihoods = get_loglhs_from_logfile(logfile, len(mlTrees))
+            idx = np.argmax(likelihoods)
+            if likelihoods[idx] > best_llh:
+                best_llh = likelihoods[idx]
+                best_tree = mlTrees[idx]
+        
+        with open(output.mlTrees, "w") as mlt:
+            for elem in mlTrees_list:
+                mlt.write(f"{elem}\n")
 
         open(output.bestTree, "w").write(best_tree.strip())
         

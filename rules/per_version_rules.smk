@@ -44,6 +44,7 @@ rule run_raxmlng_command:
             shutil.copy(output.bestTree, output.mlTrees)
 
 
+"""
 rule iqtree_significance_tests_per_raxmlng_version:
     input:
         bestTree = rules.run_raxmlng_command.output.bestTree,
@@ -68,6 +69,7 @@ rule iqtree_significance_tests_per_raxmlng_version:
             snakelog=log.snakelog,
             cmd_extra=extra[0] if len(extra) > 0 else ""
         )
+"""
 
 
 rule collect_results_per_raxmlng_version:
@@ -79,10 +81,10 @@ rule collect_results_per_raxmlng_version:
         bestModel = rules.run_raxmlng_command.output.bestModel,
 
         # IQTree results
-        iqtree_results = rules.iqtree_significance_tests_per_raxmlng_version.output.results
+        #iqtree_results = rules.iqtree_significance_tests_per_raxmlng_version.output.results
     output:
         general_results = raxmlng_cmd_prefix.with_suffix(".results.parquet"),
-        tree_results = raxmlng_cmd_prefix.with_suffix(".results.trees.parquet")
+        #tree_results = raxmlng_cmd_prefix.with_suffix(".results.trees.parquet")
     params:
         prefix = str(raxmlng_cmd_prefix)
     run:
@@ -139,6 +141,7 @@ rule collect_results_per_raxmlng_version:
         general_results.to_parquet(output.general_results)
 
         # store ML Trees and bestTree Flag + iqtree significance results
+        """
         bestTree = open(input.bestTree).readline().strip()
         mlTrees = read_file_contents(input.mlTrees)
         iqtree_resuts = get_iqtree_results(input.iqtree_results)
@@ -177,3 +180,4 @@ rule collect_results_per_raxmlng_version:
 
         tree_results = pd.DataFrame(data=tree_results)
         tree_results.to_parquet(output.tree_results)
+        """

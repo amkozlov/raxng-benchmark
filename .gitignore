@@ -1,4 +1,7 @@
-results
+# python wrappers
+*.py
+config_*
+results*
 
 .DS_Store
 .snakemake

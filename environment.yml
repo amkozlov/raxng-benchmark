@@ -1,4 +1,4 @@
-name: comparison
+name: snakemake
 channels:
   - bioconda
   - conda-forge
